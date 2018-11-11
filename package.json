@@ -1,0 +1,20 @@
+{
+  "name": "mud",
+  "private": true,
+  "version": "1.0.0",
+  "description": "API Rest for Movimento de União pela Democracia",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "mud",
+    "movimento"
+  ],
+  "author": "Thais Martins <contato@thaismartins.co>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
