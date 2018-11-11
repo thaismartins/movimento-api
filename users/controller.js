@@ -4,8 +4,8 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
-  res.send({
-    text: 'Ok. Deu certo 2!'
+  res.json({
+    text: 'Ok. Deu certo 3!'
   });
 });
 
