@@ -4,6 +4,7 @@ const app = express();
 
 const config = require('./config');
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/', require('./routes'));
