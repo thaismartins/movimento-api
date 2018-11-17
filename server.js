@@ -18,7 +18,7 @@ app.use('/', require('./routes'));
 // Handle errors
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
-  res.json({ error : error });
+  res.json({ error: error.message || error });
 });
 
 app.listen(config.port, function () {

@@ -9,10 +9,9 @@ const User = require('./model');
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('login', (err, user) => {
-
     try {
       if(err || !user){
-        const error = new Error('An Error occured')
+        const error = err || new Error('An Error occured');
         return next(error);
       }
 
@@ -20,7 +19,7 @@ router.post('/login', (req, res, next) => {
 
         if( error ) return next(error);
       
-        const body = { id : user.id };
+        const body = { id: user.id, email: user.email };
         const token = jwt.sign({ user : body }, config.jwt.secret);
 
         return res.json({ token });
@@ -69,7 +68,10 @@ router.put('/:id', passport.authenticate('jwt', { session : false }), async (req
   try {
     const user = await User.findOne({ _id: req.params.id });
 
-    if(!user) return next('User not found');
+    if(!user) {
+      const error = new Error('User not found');
+      return next(error);
+    }
 
     if(req.body.name) user.set('name', req.body.name);
     if(req.body.email) user.set('email', req.body.email);
@@ -78,11 +80,6 @@ router.put('/:id', passport.authenticate('jwt', { session : false }), async (req
     const updatedUser = await user.save();
     res.json(updatedUser);
   } catch (error) {
-
-    if(error.name && error.name == 'CastError') {
-      error = 'User not found';
-    }
-
     return next(error);
   }
 });
