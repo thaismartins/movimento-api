@@ -9,6 +9,7 @@ To run in your machine you just have to install:
 * [NodeJS](https://nodejs.org/en/)
 * [MongoDB](https://www.mongodb.com/)
 * [Nodemon](https://nodemon.io/)
+* [Yarn](https://yarnpkg.com/en/)
 
 ** See all the installation steps on their websites 
 
