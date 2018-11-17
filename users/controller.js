@@ -10,9 +10,6 @@ const User = require('./model');
 router.post('/login', (req, res, next) => {
   passport.authenticate('login', (err, user) => {
 
-    console.log('err', err);
-    console.log('user', user);
-    
     try {
       if(err || !user){
         const error = new Error('An Error occured')
@@ -34,7 +31,25 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/', (req, res, next) => {
+router.get('/', passport.authenticate('jwt', { session : false }), async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/:id', passport.authenticate('jwt', { session : false }), async (req, res, next) => {
+  try {
+    const users = await User.findOne({ _id: req.params.id });
+    res.json(users);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/', passport.authenticate('jwt', { session : false }), async (req, res, next) => {
 
     let user = new User({
       name: req.body.name,
@@ -42,27 +57,43 @@ router.post('/', (req, res, next) => {
       password: req.body.password
     });
     
-    if(!user.isValidPassword()) {
-      return next('The password have to be at least 6 characteres');
+    try {
+      const newUser = await user.save();
+      res.json(newUser);
+    } catch (error) {
+      return next(error);
+    }
+});
+
+router.put('/:id', passport.authenticate('jwt', { session : false }), async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+
+    if(!user) return next('User not found');
+
+    if(req.body.name) user.set('name', req.body.name);
+    if(req.body.email) user.set('email', req.body.email);
+    if(req.body.password) user.set('password', req.body.password);
+
+    const updatedUser = await user.save();
+    res.json(updatedUser);
+  } catch (error) {
+
+    if(error.name && error.name == 'CastError') {
+      error = 'User not found';
     }
 
-    user.save(function (err) {
-      if (err) return next(err);
-      return res.json({ user });
-    });
+    return next(error);
+  }
 });
 
-router.get('/', passport.authenticate('jwt', { session : false }), (req, res, next) => {
-  res.json({
-    text: 'Ok. Deu certo 3!'
-  });
-});
-
-router.get('/profile', passport.authenticate('jwt', { session : false }), (req, res, next) => {
-  res.json({
-    message : 'You made it to the secure route',
-    user : req.user
-  })
+router.delete('/:id', passport.authenticate('jwt', { session : false }), async (req, res, next) => {
+  try {
+    const users = await User.deleteOne({ _id: req.params.id });
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 module.exports = router;

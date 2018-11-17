@@ -29,9 +29,18 @@ const UserSchema = new Schema({
 });
 
 UserSchema.pre('save', async function(next) {
-  const hash = await bcrypt.hash(this.password, 10);
-  this.password = hash;
-  next();
+  
+  if(this.password.length < 6) {
+    return next('The password has to be at least 6 characters');
+  }
+
+  try {
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
+    next();
+  } catch(error) {
+    next(error);
+  }
 });
 
 UserSchema.methods.isCorrectPassword = async function(password) {
@@ -39,13 +48,10 @@ UserSchema.methods.isCorrectPassword = async function(password) {
   return compare;
 }
 
-UserSchema.methods.isValidPassword = function() {
-  return (this.password.length >= 6);
-}
-
 UserSchema.methods.isValid = function() {
   const user = this;
   return (user.name != '' && user.email != '' && user.password != '');
 }
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+module.exports = User;

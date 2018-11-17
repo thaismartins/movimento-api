@@ -13,8 +13,6 @@ const options = {
 
 passport.use(new JwtStrategy(options, (payload, done) => {
   
-    console.log(payload);
-    
     // TODO: validation user
     if (payload.user.id == 1234) {
         return done(null, true)
