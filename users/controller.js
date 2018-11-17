@@ -5,6 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/settings');
+const User = require('./model');
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('login', (err, user) => {
@@ -31,6 +32,24 @@ router.post('/login', (req, res, next) => {
       return next(error);
     }
   })(req, res, next);
+});
+
+router.post('/', (req, res, next) => {
+
+    let user = new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+    });
+    
+    if(!user.isValidPassword()) {
+      return next('The password have to be at least 6 characteres');
+    }
+
+    user.save(function (err) {
+      if (err) return next(err);
+      return res.json({ user });
+    });
 });
 
 router.get('/', passport.authenticate('jwt', { session : false }), (req, res, next) => {
