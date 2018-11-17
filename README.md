@@ -17,13 +17,13 @@ To run in your machine you just have to install:
 After install the prerequisites, you need install the dependencies:
 
 ```
-npm install
+yarn install
 ```
 
 ### Running the env
 
 ```
-npm start
+yarn start
 ```
 
 ## Running the tests
@@ -31,7 +31,7 @@ npm start
 To run tests:
 
 ```
-npm tests
+yarn tests
 ```
 
 ## Built With
