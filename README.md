@@ -21,13 +21,13 @@ After install the prerequisites, you need install the dependencies:
 yarn install
 ```
 
-### Running the env
+### Running local
 
 ```
 yarn start
 ```
 
-## Running the tests
+### Running tests
 
 To run tests:
 
