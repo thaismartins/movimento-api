@@ -1,13 +1,19 @@
+'use strict';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
+const config = require('config');
 
-const config = require('./config/settings');
-
-mongoose.connect('mongodb://127.0.0.1:27017/mud', { useNewUrlParser: true });
+mongoose.connect(config.database, { useNewUrlParser: true });
 mongoose.set('useCreateIndex', true);
-mongoose.connection.on('error', error => console.log('MongoDB ERROR: ', error) );
+mongoose.connection.on('connected', () => {
+  if(config.util.getEnv('NODE_ENV') != 'test') {
+    console.log(`Mongoose default connection open to ${config.database}`);
+  }
+});
+mongoose.connection.on('error', error => console.log(`Mongoose error: ${error}`));
 mongoose.Promise = global.Promise;
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,6 +27,10 @@ app.use((error, req, res, next) => {
   res.json({ error: error.message || error });
 });
 
-app.listen(config.port, function () {
-  console.log(`App listening on http://localhost:${config.port}/`)
+const server = app.listen(config.port, function () {
+  if(config.util.getEnv('NODE_ENV') != 'test') {
+    console.log(`App listening on http://localhost:${config.port}/`)
+  }
 });
+
+module.exports = server;
